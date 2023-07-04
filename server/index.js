@@ -7,10 +7,13 @@ import postRoutes from "./routes/posts.js";
 import userRouter from "./routes/user.js";
 
 const app = express();
+const corsOptions = {
+  origin: "https://mysocialmedia-memories-webapp.onrender.com", // frontend URI (ReactJS)
+};
 
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use("/posts", postRoutes);
 app.use("/user", userRouter);

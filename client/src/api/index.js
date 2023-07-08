@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://mysocialmedia-memories.onrender.com",
+  baseURL: process.env.REACT_APP_BASE_URL,
 });
 
 API.interceptors.request.use((req) => {

@@ -32,17 +32,19 @@ const Post = () => {
     }
   }, [post]);
 
+  if (!post) return null;
+  if (isLoading) {
+    return (
+      <Paper elevation={6} className={classes.loadingPaper}>
+        <CircularProgress size="7em" />
+      </Paper>
+    );
+  }
   const openPost = (_id) => history.push(`/posts/${_id}`);
-
-  if (!post && !isLoading) return null;
 
   const recommendedPosts = posts?.filter(({ _id }) => _id !== post._id);
 
-  return isLoading ? (
-    <Paper elevation={6} className={classes.loadingPaper}>
-      <CircularProgress size="7em" />
-    </Paper>
-  ) : (
+  return (
     <Paper style={{ padding: "20px", borderRadius: "15px" }} elevation={6}>
       <div className={classes.card}>
         <div className={classes.section}>

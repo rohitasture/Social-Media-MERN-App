@@ -59,7 +59,9 @@ const Navbar = () => {
             <Avatar
               className={classes.purple}
               alt={user?.result.name}
-              src={user?.result.imageUrl}
+              src={
+                user?.result?.sub ? user.result.picture : user?.result.imageUrl
+              }
             >
               {user?.result.name.charAt(0)}
             </Avatar>

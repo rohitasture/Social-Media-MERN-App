@@ -30,6 +30,7 @@ const initialState = {
 
 const SignUp = () => {
   const [form, setForm] = useState(initialState);
+  const [error, setError] = useState(null);
   const [isSignup, setIsSignup] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -44,13 +45,23 @@ const SignUp = () => {
     setShowPassword(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (isSignup) {
-      dispatch(signup(form, history));
+      try {
+        await dispatch(signup(form, history));
+        setError(null);
+      } catch (err) {
+        setError("Invalid Input !!!");
+      }
     } else {
-      dispatch(signin(form, history));
+      try {
+        await dispatch(signin(form, history));
+        setError(null);
+      } catch (err) {
+        setError("Invalid Input !!!");
+      }
     }
   };
 
@@ -133,8 +144,10 @@ const SignUp = () => {
           >
             {isSignup ? "Sign Up" : "Sign In"}
           </Button>
+          <Typography component="h1" variant="h5">
+            {error && error}
+          </Typography>
           <GoogleLogin
-            //clientId="809772801203-49c7ma3k34vv56el3hrv52eknvs1ffdq.apps.googleusercontent.com"
             render={(renderProps) => (
               <Button
                 className={classes.googleButton}

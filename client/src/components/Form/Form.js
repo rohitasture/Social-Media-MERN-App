@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import FileBase from "react-file-base64";
 import { useHistory } from "react-router-dom";
 import ChipInput from "material-ui-chip-input";
+import upload from "../../utils/upload.js";
 
 import { createPost, updatePost } from "../../actions/posts";
 import useStyles from "./styles";
 
 const Form = ({ currentId, setCurrentId }) => {
+  const fileref = useRef();
+  const [isLoading, setIsLoading] = useState(false);
   const [postData, setPostData] = useState({
     title: "",
     message: "",
@@ -27,6 +30,7 @@ const Form = ({ currentId, setCurrentId }) => {
 
   const clear = () => {
     setCurrentId(0);
+    if (fileref?.current?.value) fileref.current.value = "";
     setPostData({ title: "", message: "", tags: [], selectedFile: "" });
   };
 
@@ -35,10 +39,22 @@ const Form = ({ currentId, setCurrentId }) => {
     if (post) setPostData(post);
   }, [post]);
 
+  const handleUpload = async (e) => {
+    try {
+      setIsLoading(true);
+      const url = await upload(postData.selectedFile);
+      setPostData({ ...postData, selectedFile: url });
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (currentId === 0) {
+    if (postData.title === "") {
+      alert("Please fill the title!!!");
+    } else if (currentId === 0) {
       dispatch(createPost({ ...postData, name: user?.result?.name }, history));
       clear();
     } else {
@@ -113,13 +129,29 @@ const Form = ({ currentId, setCurrentId }) => {
           />
         </div>
         <div className={classes.fileInput}>
-          <FileBase
+          {/* <FileBase
             type="file"
             multiple={false}
             onDone={({ base64 }) =>
               setPostData({ ...postData, selectedFile: base64 })
             }
+          /> */}
+          <input
+            type="file"
+            ref={fileref}
+            onChange={(e) =>
+              setPostData({ ...postData, selectedFile: e.target.files[0] })
+            }
           />
+          <Button
+            className={classes.buttonSubmit}
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={handleUpload}
+          >
+            {isLoading ? "Uploading..." : "Upload"}
+          </Button>
         </div>
         <Button
           className={classes.buttonSubmit}
@@ -140,6 +172,7 @@ const Form = ({ currentId, setCurrentId }) => {
         >
           Clear
         </Button>
+        {/* <h3>{error && error.response.data}</h3> */}
       </form>
     </Paper>
   );

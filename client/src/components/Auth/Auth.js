@@ -32,6 +32,7 @@ const SignUp = () => {
   const [form, setForm] = useState(initialState);
   const [error, setError] = useState(null);
   const [isSignup, setIsSignup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
   const classes = useStyles();
@@ -50,17 +51,23 @@ const SignUp = () => {
 
     if (isSignup) {
       try {
+        setIsLoading(true);
         await dispatch(signup(form, history));
         setError(null);
+        setIsLoading(false);
       } catch (err) {
         setError("Invalid Input !!!");
+        setIsLoading(false);
       }
     } else {
       try {
+        setIsLoading(true);
         await dispatch(signin(form, history));
+        setIsLoading(false);
         setError(null);
       } catch (err) {
         setError("Invalid Input !!!");
+        setIsLoading(false);
       }
     }
   };
@@ -142,7 +149,7 @@ const SignUp = () => {
             color="primary"
             className={classes.submit}
           >
-            {isSignup ? "Sign Up" : "Sign In"}
+            {isLoading ? "Loading" : isSignup ? "Sign Up" : "Sign In"}
           </Button>
           <Typography component="h1" variant="h5">
             {error && error}
